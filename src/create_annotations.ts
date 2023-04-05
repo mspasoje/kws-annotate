@@ -26,6 +26,19 @@ type ScanResult = {
   Annotations: ScanResultAnnotation[];
 };
 
+type ScanResultAnnotation1 = {
+  path: string;
+  start_line: number;
+  end_line: number;
+  annotation_level: string;
+  message: string;
+};
+
+type CheckOutput = {
+  summary: string;
+  annotations: ScanResultAnnotation1[];
+};
+
 export function createAnnotationsJson(resultJson: string, start_index: number, end_index: number): string {
   try {
     const result_obj: ScanResult = JSON.parse(resultJson);
@@ -88,6 +101,22 @@ export function createJsonPayload(resultJson: ScanResult, checkName: string, che
   return jsonPayloadString;
 }
 
+function createOutputJson(resultJson: ScanResult, checkName: string, checkTitle: string, start_index: number, end_index: number): CheckOutput {
+
+  console.log(resultJson);
+  const mapped = resultJson.Annotations.slice(start_index, end_index).map((annotation: ScanResultAnnotation) => <ScanResultAnnotation1>({path: annotation.Path,
+    start_line: annotation.StartLine,
+    end_line: annotation.EndLine,
+    annotation_level: annotation.Level,
+    message: annotation.Message
+  }));
+
+  return <CheckOutput>({
+    summary: `There are ${resultJson.ValidMatches.Blocker} blockers, ${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues."`,
+    annotations: mapped
+  })
+}
+
 function resultFromJson(resultJson: string): ScanResult {
   try {
     return JSON.parse(resultJson);
@@ -118,7 +147,23 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
     owner: owner,
     repo: repo,
     name: checkName,
+    title: checkTitle,
     head_sha: headSHA
+  });
+
+  core.debug(`response:${response}`);
+  core.debug(`response:${response.data}`);
+  core.debug(`response:${response.data.id}`);
+
+  const generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
+
+  const updateResponse = await octokit.rest.checks.update({
+    owner: owner,
+    repo: repo,
+    check_run_in: response.data.id,
+    summary: checkName,
+    head_sha: headSHA,
+    output: generatedOutput
   });
 
   return response;

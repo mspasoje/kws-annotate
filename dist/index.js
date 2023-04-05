@@ -93,6 +93,19 @@ function createJsonPayload(resultJson, checkName, checkTitle, start_index, end_i
     return jsonPayloadString;
 }
 exports.createJsonPayload = createJsonPayload;
+function createOutputJson(resultJson, checkName, checkTitle, start_index, end_index) {
+    console.log(resultJson);
+    const mapped = resultJson.Annotations.slice(start_index, end_index).map((annotation) => ({ path: annotation.Path,
+        start_line: annotation.StartLine,
+        end_line: annotation.EndLine,
+        annotation_level: annotation.Level,
+        message: annotation.Message
+    }));
+    return ({
+        summary: `There are ${resultJson.ValidMatches.Blocker} blockers, ${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues."`,
+        annotations: mapped
+    });
+}
 function resultFromJson(resultJson) {
     try {
         return JSON.parse(resultJson);
@@ -121,7 +134,20 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
             owner: owner,
             repo: repo,
             name: checkName,
+            title: checkTitle,
             head_sha: headSHA
+        });
+        core.debug(`response:${response}`);
+        core.debug(`response:${response.data}`);
+        core.debug(`response:${response.data.id}`);
+        const generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
+        const updateResponse = yield octokit.rest.checks.update({
+            owner: owner,
+            repo: repo,
+            check_run_in: response.data.id,
+            summary: checkName,
+            head_sha: headSHA,
+            output: generatedOutput
         });
         return response;
     });

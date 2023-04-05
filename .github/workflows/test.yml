@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./
         with:
-          result_json: '{}'
+          result_json: '{"ValidMatches":{"Blocker":0,"Warning":1,"ShouldBeFixed":2,"Informational":3},"ScanStartTime":"01-01-23","ScanEndTime":"01-01-23","SourceId":"${{github.sha}}","Annotations":[{"Path":".github/workflows/test.yml","Level":"warning","StartLine":26,"EndLine":26,"Message":"Some stuff"},{"Path":".github/workflows/test.yml","Level":"error","StartLine":21,"EndLine":21,"Message":"Some stuff"}]}'
           owner: 'mspasoje'
           repo: 'kws-annotate'
           name: 'Some nice name'
