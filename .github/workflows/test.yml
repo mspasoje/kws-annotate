@@ -26,5 +26,5 @@ jobs:
           repo: 'kws-annotate'
           name: 'Some nice name'
           title: 'Legendary title'
-          pat: 'xyz'
+          pat: ${{ secrets.MIO_PAT_TYPESCRIPT_ACTION }}
 
