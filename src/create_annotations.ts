@@ -97,7 +97,9 @@ function resultFromJson(resultJson: string): ScanResult {
 }
 
 export async function createCheck(resultJson: string, checkName: string, checkTitle: string, owner: string, repo: string, authPAT: string) {
+  core.debug("createCheck");
   const scanResult = resultFromJson(resultJson);
+  core.debug("got scan result");
   core.debug(`scanResult:${scanResult}`);
   let startIndex = 0;
   const jsonPayload = createJsonPayload(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
