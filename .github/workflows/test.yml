@@ -27,5 +27,4 @@ jobs:
           name: 'Some nice name'
           title: 'Legendary title'
           pat: ${{ secrets.GITHUB_TOKEN }}
-          head_sha: ${{ GITHUB_SHA }}
-
+          head_sha: ${{ github.sha }}
