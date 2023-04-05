@@ -1,3 +1,4 @@
+import * as core from '@actions/core'
 import {Octokit} from '@octokit/rest';
 
 type ScanResultAnnotation = {
@@ -48,6 +49,8 @@ export function toPayloadAnnotations(annotations: ScanResultAnnotation[], start_
   if (!annotations) {
     return "";
   }
+  core.debug(`So what are these annotations?:${annotations}`);
+
   const mapped = annotations.slice(start_index, end_index).map((annotation: ScanResultAnnotation) => 
     `{\"path\":\"${annotation.Path}\",\"annotation_level\":\"${annotation.Level}\",\"start_line\":${annotation.StartLine},\"end_line\":${annotation.EndLine},` + 
     `\"raw_details\":\"${annotation.RawDetails??"Keyword found"}\",\"message\":\"${annotation.Message??"Please look for keywords"}\",` +
@@ -95,6 +98,7 @@ function resultFromJson(resultJson: string): ScanResult {
 
 export async function createCheck(resultJson: string, checkName: string, checkTitle: string, owner: string, repo: string, authPAT: string) {
   const scanResult = resultFromJson(resultJson);
+  core.debug(`scanResult:${scanResult}`);
   let startIndex = 0;
   const jsonPayload = createJsonPayload(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
 
