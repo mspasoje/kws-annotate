@@ -115,10 +115,11 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT) {
             userAgent: 'KWS Annotate GH Action v1',
             baseUrl: 'https://api.github.com'
         });
-        core.debug(`octokit client:${octokit}`);
+        core.debug(`octokit client:${octokit.rest}`);
+        core.debug(`octokit client:${octokit.rest.checks}`);
         const response = yield octokit.rest.checks.create({
-            owner: owner,
-            repo: repo
+            owner,
+            repo
         });
         return response;
     });

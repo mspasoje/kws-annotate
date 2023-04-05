@@ -111,13 +111,13 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
     baseUrl: 'https://api.github.com'
   });
     
-  core.debug(`octokit client:${octokit}`);
+  core.debug(`octokit client:${octokit.rest}`);
+  core.debug(`octokit client:${octokit.rest.checks}`);
     
   const response = await octokit.rest.checks.create({
-    owner: owner,
-    repo: repo
-    },
-  );
+    owner,
+    repo
+  });
 
   return response;
 }
