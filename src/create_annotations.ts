@@ -45,6 +45,9 @@ export function createAnnotationsJson(resultJson: string, start_index: number, e
 }
 
 export function toPayloadAnnotations(annotations: ScanResultAnnotation[], start_index: number, end_index: number): string {
+  if (!annotations) {
+    return "";
+  }
   const mapped = annotations.slice(start_index, end_index).map((annotation: ScanResultAnnotation) => 
     `{\"path\":\"${annotation.Path}\",\"annotation_level\":\"${annotation.Level}\",\"start_line\":${annotation.StartLine},\"end_line\":${annotation.EndLine},` + 
     `\"raw_details\":\"${annotation.RawDetails??"Keyword found"}\",\"message\":\"${annotation.Message??"Please look for keywords"}\",` +
