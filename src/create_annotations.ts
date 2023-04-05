@@ -96,7 +96,7 @@ function resultFromJson(resultJson: string): ScanResult {
   }
 }
 
-export async function createCheck(resultJson: string, checkName: string, checkTitle: string, owner: string, repo: string, authPAT: string) {
+export async function createCheck(resultJson: string, checkName: string, checkTitle: string, owner: string, repo: string, authPAT: string, headSHA: string) {
   core.debug("createCheck");
   const scanResult = resultFromJson(resultJson);
   core.debug("got scan result");
@@ -115,8 +115,10 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
   core.debug(`octokit client:${octokit.rest.checks}`);
     
   const response = await octokit.rest.checks.create({
-    owner,
-    repo
+    owner: owner,
+    repo: repo,
+    name: checkName,
+    head_sha: headSHA
   });
 
   return response;

@@ -26,6 +26,10 @@ inputs:
     required: true
     description: 'PAT used for authorization'
     default: ''
+  head_sha:
+    required: true
+    description: 'SHA of the commit to create check for'
+    default: ''
 runs:
   using: 'node16'
   main: 'dist/index.js'

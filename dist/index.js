@@ -101,7 +101,7 @@ function resultFromJson(resultJson) {
         throw new Error('result_json is not json');
     }
 }
-function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT) {
+function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, headSHA) {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug("createCheck");
         const scanResult = resultFromJson(resultJson);
@@ -118,8 +118,10 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT) {
         core.debug(`octokit client:${octokit.rest}`);
         core.debug(`octokit client:${octokit.rest.checks}`);
         const response = yield octokit.rest.checks.create({
-            owner,
-            repo
+            owner: owner,
+            repo: repo,
+            name: checkName,
+            head_sha: headSHA
         });
         return response;
     });
@@ -175,9 +177,11 @@ function run() {
             const checkName = core.getInput('name');
             const checkTitle = core.getInput('title');
             const pat = core.getInput('pat');
+            const headSHA = core.getInput('head_sha');
             core.debug(`Received this json: ${result_json} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
             core.debug(new Date().toTimeString());
-            const response = yield (0, create_annotations_1.createCheck)(result_json, checkName, checkTitle, owner, repo, pat);
+            core.debug(headSHA);
+            const response = yield (0, create_annotations_1.createCheck)(result_json, checkName, checkTitle, owner, repo, pat, headSHA);
             core.debug(`${response.data}`);
         }
         catch (error) {
