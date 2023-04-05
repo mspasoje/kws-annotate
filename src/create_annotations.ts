@@ -156,6 +156,7 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
   core.debug(`response:${response.data.id}`);
 
   const generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
+  core.debug(`generatedOutput:${generatedOutput}`);
 
   const updateResponse = await octokit.rest.checks.update({
     owner: owner,
