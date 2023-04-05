@@ -109,11 +109,13 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT) {
         core.debug(`scanResult:${scanResult}`);
         let startIndex = 0;
         const jsonPayload = createJsonPayload(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
+        core.debug(`jsonPayload:${jsonPayload}`);
         const octokit = new rest_1.Octokit({
             auth: authPAT,
             userAgent: 'KWS Annotate GH Action v1',
             baseUrl: 'https://api.github.com'
         });
+        core.debug(`octokit client:${octokit}`);
         const response = yield octokit.rest.checks.create({
             owner: owner,
             repo: repo

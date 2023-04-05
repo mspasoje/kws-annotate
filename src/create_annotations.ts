@@ -104,12 +104,14 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
   let startIndex = 0;
   const jsonPayload = createJsonPayload(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
 
+  core.debug(`jsonPayload:${jsonPayload}`);
   const octokit = new Octokit({
     auth: authPAT,
     userAgent: 'KWS Annotate GH Action v1',
     baseUrl: 'https://api.github.com'
   });
     
+  core.debug(`octokit client:${octokit}`);
     
   const response = await octokit.rest.checks.create({
     owner: owner,
