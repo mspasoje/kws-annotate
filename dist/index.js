@@ -112,7 +112,7 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT) {
         const octokit = new rest_1.Octokit({
             auth: authPAT,
             userAgent: 'KWS Annotate GH Action v1',
-            baseUrl: 'https://github.amd.com/api/v3'
+            baseUrl: 'https://github.com'
         });
         const response = yield octokit.rest.checks.create({
             owner: owner,
