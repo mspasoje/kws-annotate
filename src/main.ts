@@ -1,18 +1,24 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import {createCheck} from './create_annotations'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    core.debug('Somi car');
+    const result_json: string = core.getInput('result_json');
+    const owner: string = core.getInput('owner');
+    const repo: string = core.getInput('repo');
+    const checkName: string = core.getInput('name');
+    const checkTitle: string = core.getInput('title');
+    const pat: string = core.getInput('pat');
+    core.debug(`Received this json: ${result_json} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    core.debug(new Date().toTimeString());
 
-    core.setOutput('time', new Date().toTimeString())
+    const response = await createCheck(result_json, checkName, checkTitle, owner, repo, pat);
+
+    core.debug(`${response.data}`);
   } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+    if (error instanceof Error) core.setFailed(error.message);
   }
 }
 

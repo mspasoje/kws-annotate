@@ -1,11 +1,31 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Miodrag Spasojevic'
+description: 'Used to annotate based on a json input'
+author: 'AMD'
 inputs:
-  milliseconds: # change this
+  result_json:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'json string input for annotations'
+    default: '{}'
+  owner:
+    required: true
+    description: 'owner'
+    default: ''
+  repo:
+    required: true
+    description: 'repo'
+    default: ''
+  name:
+    required: true
+    description: 'Reasonable name'
+    default: ''
+  title:
+    required: true
+    description: 'Reasonable title'
+    default: ''
+  pat:
+    required: true
+    description: 'PAT used for authorization'
+    default: ''
 runs:
   using: 'node16'
   main: 'dist/index.js'
