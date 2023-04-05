@@ -107,7 +107,7 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
   const octokit = new Octokit({
     auth: authPAT,
     userAgent: 'KWS Annotate GH Action v1',
-    baseUrl: 'https://github.amd.com/api/v3'
+    baseUrl: 'https://github.com'
   });
     
     
