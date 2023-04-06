@@ -115,7 +115,7 @@ function createOutputJson(resultJson: ScanResult, checkName: string, checkTitle:
   return <CheckOutput>({
     title: checkTitle,
     summary: `There are ${resultJson.ValidMatches.Blocker} blockers, ${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues.`,
-    //annotations: mapped
+    annotations: mapped
   })
 }
 
