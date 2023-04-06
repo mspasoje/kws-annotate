@@ -164,7 +164,7 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
         //    started_at: startTime.toISOString()
           });
         */
-        yield octokit.request('PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}', {
+        const breakItMaybe = yield octokit.request('PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}', {
             owner: owner,
             repo: repo,
             check_run_id: response.data.id,
@@ -208,7 +208,7 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
               'X-GitHub-Api-Version': '2022-11-28'
             }*/
         });
-        core.debug(`Somi car opet`);
+        core.debug(`Somi car opet${breakItMaybe}`);
         //  core.debug(`patchCheckRunResponse:${JSON.stringify(updateResponse)}`);
         return response;
     });

@@ -182,7 +182,7 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
 //    started_at: startTime.toISOString()
   });
 */
-  await octokit.request('PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}', {
+  const breakItMaybe = await octokit.request('PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}', {
     owner: owner,
     repo: repo,
     check_run_id: response.data.id,
@@ -227,7 +227,7 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
     }*/
   })
 
-  core.debug(`Somi car opet`);
+  core.debug(`Somi car opet${breakItMaybe}`);
   
 
 //  core.debug(`patchCheckRunResponse:${JSON.stringify(updateResponse)}`);
