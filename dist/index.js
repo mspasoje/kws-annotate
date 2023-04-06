@@ -57,7 +57,7 @@ function createCheck(output_file_path, checkName, checkTitle, owner, repo, authP
         core.debug("createCheck");
         var result_json = require(output_file_path);
         let startIndex = 0;
-        const indexStep = 1;
+        const indexStep = 50;
         const octokit = new rest_1.Octokit({
             auth: authPAT,
             userAgent: 'KWS Annotate GH Action v1',
