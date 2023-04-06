@@ -1,4 +1,4 @@
-import {createAnnotationsJson} from '../src/create_annotations'
+import {resultFromJson} from '../src/create_annotations'
 import * as process from 'process'
 import * as cp from 'child_process'
 import * as path from 'path'
@@ -18,7 +18,7 @@ test('throws invalid json', async () => {
             "EndLine": 22\
     }]}';
 
-  expect(() => createAnnotationsJson(result_json, 0, 50)).toThrow('result_json is not json');
+  expect(() => resultFromJson(result_json)).toThrow('result_json is not json');
 })
 
 // shows how the runner will run a javascript action with env / stdout protocol
