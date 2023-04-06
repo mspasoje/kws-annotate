@@ -177,8 +177,8 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
     status: "queued",
     name: checkName,
 //    summary: checkName,
-//    head_sha: headSHA,
-    output: generatedOutput
+    head_sha: headSHA,
+//    output: generatedOutput
   });
 
   return response;

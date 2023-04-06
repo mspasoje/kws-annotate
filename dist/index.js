@@ -158,8 +158,8 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
             status: "queued",
             name: checkName,
             //    summary: checkName,
-            //    head_sha: headSHA,
-            output: generatedOutput
+            head_sha: headSHA,
+            //    output: generatedOutput
         });
         return response;
     });
