@@ -26,10 +26,10 @@ jobs:
   test: # make sure the action works on a clean machine without building
     needs: seed_file
     runs-on: ubuntu-latest
-    env:
-      input: HOME
     steps:
       - uses: actions/checkout@v3
+      - run: echo ::set-output name=dir_value::$HOME
+        id: current_dir
       - uses: ./
         with:
           result_json: '{"ValidMatches":{"Blocker":0,"Warning":1,"ShouldBeFixed":2,"Informational":3},"ScanStartTime":"01-01-23","ScanEndTime":"01-01-23","SourceId":"${{github.sha}}","ScanMatches":[{"Path":".github/workflows/test.yml","KeyWordSeverity":"ShouldBeFixed","StartLine":26,"EndLine":26,"Message":"We found a word bird here."},{"Path":".github/workflows/test.yml","KeyWordSeverity":"Blocker","StartLine":21,"EndLine":21,"Message":"We found a word eagle here."}]}'
@@ -39,4 +39,4 @@ jobs:
           title: 'Legendary title'
           pat: ${{ secrets.GITHUB_TOKEN }}
           head_sha: ${{ github.sha }}
-          output_file_path: ${{ env.input }}/output_file.json
+          output_file_path: ${{ steps.current_dir.outputs.dir_value }}/output_file.json
