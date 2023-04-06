@@ -74,30 +74,32 @@ function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT
             name: checkName,
             head_sha: headSHA,
             status: 'completed',
-            started_at: '2018-05-04T01:14:52Z',
-            completed_at: '2018-05-04T01:14:52Z',
+            started_at: result_json.ScanStartTime,
+            completed_at: result_json.ScanEndTime,
             conclusion: 'success',
             output: generatedOutput
         });
         core.debug(`octokit client:${response.status}`);
-        core.debug(`octokit client:${response.data}`);
-        startIndex += indexStep;
-        generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
-        core.debug(`first generatedOutput.annotations:${generatedOutput.annotations.length}`);
-        while (generatedOutput.annotations.length > 0) {
-            yield octokit.request('PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}', {
-                owner: owner,
-                repo: repo,
-                check_run_id: response.data.id,
-                name: checkName,
-                output: generatedOutput,
-                headers: {
-                    'X-GitHub-Api-Version': '2022-11-28'
-                }
-            });
+        //  core.debug(`octokit client:${response.data}`);
+        if (response.status === 201) {
             startIndex += indexStep;
             generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
-            core.debug(`loop generatedOutput.annotations:${generatedOutput.annotations.length}`);
+            core.debug(`first generatedOutput.annotations:${generatedOutput.annotations.length}`);
+            while (generatedOutput.annotations.length > 0) {
+                yield octokit.request('PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}', {
+                    owner: owner,
+                    repo: repo,
+                    check_run_id: response.data.id,
+                    name: checkName,
+                    output: generatedOutput,
+                    headers: {
+                        'X-GitHub-Api-Version': '2022-11-28'
+                    }
+                });
+                startIndex += indexStep;
+                generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
+                core.debug(`loop generatedOutput.annotations:${generatedOutput.annotations.length}`);
+            }
         }
         core.debug(`Create check completed`);
         return response;
