@@ -127,7 +127,8 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
         const octokit = new rest_1.Octokit({
             auth: authPAT,
             userAgent: 'KWS Annotate GH Action v1',
-            baseUrl: 'https://api.github.com'
+            baseUrl: 'https://api.github.com',
+            log: console
         });
         core.debug(`octokit client:${octokit.rest}`);
         core.debug(`octokit client:${octokit.rest.checks}`);
