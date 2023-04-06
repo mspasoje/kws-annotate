@@ -137,7 +137,7 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
             repo: repo,
             name: checkName,
             head_sha: headSHA,
-            output: { title: checkTitle }
+            output: { title: checkTitle, summary: "Not yet available" }
         });
         core.debug(`response:${response}`);
         core.debug(`response:${response.data}`);

@@ -151,7 +151,7 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
     repo: repo,
     name: checkName,
     head_sha: headSHA,
-    output: {title: checkTitle}
+    output: {title: checkTitle, summary: "Not yet available"}
   });
 
   core.debug(`response:${response}`);
