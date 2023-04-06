@@ -187,10 +187,10 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
     repo: repo,
     check_run_id: response.data.id,
     name: checkName,
-    started_at: '2018-05-04T01:14:52Z',
+//    started_at: '2018-05-04T01:14:52Z',
 //    status: 'completed',
-    conclusion: 'success',
-    completed_at: '2018-05-04T01:14:52Z',
+//    conclusion: 'success',
+//    completed_at: '2018-05-04T01:14:52Z',
     output: {
       title: checkTitle,
       summary: 'There are 0 failures, 2 warnings, and 1 notices.',
