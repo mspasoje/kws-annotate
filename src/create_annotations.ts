@@ -181,5 +181,8 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
 //    output: generatedOutput
   });
 
+  core.debug(`getCheckRunResponse:${JSON.stringify(updateResponse)}`);
+  
+
   return response;
 }

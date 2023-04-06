@@ -161,6 +161,7 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
             head_sha: headSHA,
             //    output: generatedOutput
         });
+        core.debug(`getCheckRunResponse:${JSON.stringify(updateResponse)}`);
         return response;
     });
 }
