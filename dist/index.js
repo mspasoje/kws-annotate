@@ -35,52 +35,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createCheck = exports.resultFromJson = void 0;
+exports.createCheck = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const rest_1 = __nccwpck_require__(5375);
-// export function createAnnotationsJson(resultJson: string, start_index: number, end_index: number): string {
-//   try {
-//     const result_obj: ScanResult = JSON.parse(resultJson);
-//     console.log(result_obj);
-//     const mapped = result_obj.Annotations.map((annotation: ScanResultAnnotation) => 
-//       `{\"path\":\"${annotation.Path}\",\"annotation_level\":\"${annotation.Level}\",\"start_line\":${annotation.StartLine},\"end_line\":${annotation.EndLine},` + 
-//       `\"raw_details\":\"${annotation.RawDetails??"Keyword found"}\",\"message\":\"${annotation.Message??"Please look for keywords"}\",` +
-//       `\"title\":\"${annotation.Title}\"}`
-//       );
-//     const annotations = mapped.reduce((previousValue: string, currentValue: string) => previousValue ? previousValue + "," + currentValue : currentValue, "");
-//     console.log(annotations);
-//     return annotations;
-//   } catch (e) {
-//     throw new Error('result_json is not json')
-//   }  
-// }
-// export function toPayloadAnnotations(annotations: ScanResultAnnotation[], start_index: number, end_index: number): string {
-//   if (!annotations) {
-//     return "";
-//   }
-//   core.debug(`So what are these annotations?:${annotations}`);
-//   const mapped = annotations.slice(start_index, end_index).map((annotation: ScanResultAnnotation) => 
-//     `{\"path\":\"${annotation.Path}\",\"annotation_level\":\"${annotation.Level}\",\"start_line\":${annotation.StartLine},\"end_line\":${annotation.EndLine},` + 
-//     `\"raw_details\":\"${annotation.RawDetails??"Keyword found"}\",\"message\":\"${annotation.Message??"Please look for keywords"}\",` +
-//     `\"title\":\"${annotation.Title}\"}`
-//     );
-//   const annotationsJsonString = mapped.reduce((previousValue: string, currentValue: string) => previousValue ? previousValue + "," + currentValue : currentValue, "");
-//   return annotationsJsonString;
-// }
-// export function createJsonPayload(resultJson: ScanResult, checkName: string, checkTitle: string, start_index: number, end_index: number): string {
-//   const payloadAnnotations = toPayloadAnnotations(resultJson.Annotations, start_index, end_index)
-//   if (!payloadAnnotations) {
-//     return "";
-//   }
-//   const jsonPayloadString = `{"name":"${checkName}","head_sha":"${resultJson.SourceId}","started_at":"${resultJson.ScanStartTime}","completed_at":"${resultJson.ScanEndTime}",` +
-//     `"status":"completed","conclusion":"success",` +
-//     `"output":{"title":"${checkTitle}","summary":"There are ${resultJson.ValidMatches.Blocker} blockers, ` + 
-//     `${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues.",` +
-//     `"text":"Please note that issues are highlighted only in files modified as part of this PR.","annotations":[${payloadAnnotations}]}}`;
-//   console.log(jsonPayloadString);
-//   return jsonPayloadString;
-// }
-function createOutputJson(resultJson, checkName, checkTitle, start_index, end_index) {
+function createOutputJson(resultJson, checkTitle, start_index, end_index) {
     console.log(resultJson);
     const mapped = resultJson.ScanMatches.slice(start_index, end_index).map((annotation) => ({ path: annotation.Path,
         start_line: annotation.StartLine,
@@ -94,21 +52,12 @@ function createOutputJson(resultJson, checkName, checkTitle, start_index, end_in
         annotations: mapped
     });
 }
-function resultFromJson(resultJson) {
-    try {
-        return JSON.parse(resultJson);
-    }
-    catch (e) {
-        throw new Error('result_json is not json');
-    }
-}
-exports.resultFromJson = resultFromJson;
-function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, headSHA) {
+function createCheck(output_file_path, checkName, checkTitle, owner, repo, authPAT, headSHA) {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug("createCheck");
-        const scanResult = resultJson; //resultFromJson(resultJson);
+        var result_json = require(output_file_path);
         let startIndex = 0;
-        const indexStep = 1;
+        const indexStep = 50;
         const octokit = new rest_1.Octokit({
             auth: authPAT,
             userAgent: 'KWS Annotate GH Action v1',
@@ -117,7 +66,7 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
         });
         core.debug(`octokit client:${octokit.rest}`);
         core.debug(`octokit client:${octokit.rest.checks}`);
-        let generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + indexStep);
+        let generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
         const response = yield octokit.rest.checks.create({
             owner: owner,
             repo: repo,
@@ -139,24 +88,20 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
         //   output: generatedOutput
         // });
         startIndex += indexStep;
-        generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + indexStep);
+        generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
         while (generatedOutput.annotations.length > 0) {
             yield octokit.request('PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}', {
                 owner: owner,
                 repo: repo,
                 check_run_id: response.data.id,
                 name: checkName,
-                // started_at: '2018-05-04T01:14:52Z',
-                // status: 'completed',
-                // conclusion: 'success',
-                // completed_at: '2018-05-04T01:14:52Z',
                 output: generatedOutput,
                 headers: {
                     'X-GitHub-Api-Version': '2022-11-28'
                 }
             });
             startIndex += indexStep;
-            generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + indexStep);
+            generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
         }
         core.debug(`Create check completed`);
         return response;
@@ -214,9 +159,8 @@ function run() {
             const pat = core.getInput('pat');
             const headSHA = core.getInput('head_sha');
             const output_file_path = core.getInput('output_file_path');
-            var result_json = require(output_file_path);
-            core.debug(`Received this json: ${result_json} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-            const response = yield (0, create_annotations_1.createCheck)(result_json, checkName, checkTitle, owner, repo, pat, headSHA);
+            //    core.debug(`Received this json: ${result_json} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+            const response = yield (0, create_annotations_1.createCheck)(output_file_path, checkName, checkTitle, owner, repo, pat, headSHA);
             core.debug(`response: ${response}`);
         }
         catch (error) {

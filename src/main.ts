@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {createCheck, ScanResult} from './create_annotations'
+import {createCheck} from './create_annotations'
 
 async function run(): Promise<void> {
   try {
@@ -13,10 +13,9 @@ async function run(): Promise<void> {
     const output_file_path: string = core.getInput('output_file_path');
 
 
-    var result_json: ScanResult = require(output_file_path);
-    core.debug(`Received this json: ${result_json} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+//    core.debug(`Received this json: ${result_json} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
 
-    const response = await createCheck(result_json, checkName, checkTitle, owner, repo, pat, headSHA);
+    const response = await createCheck(output_file_path, checkName, checkTitle, owner, repo, pat, headSHA);
     core.debug(`response: ${response}`);
 
 

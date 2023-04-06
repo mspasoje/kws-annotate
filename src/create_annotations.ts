@@ -40,59 +40,7 @@ type CheckOutput = {
   annotations: ScanResultAnnotation[];
 };
 
-// export function createAnnotationsJson(resultJson: string, start_index: number, end_index: number): string {
-//   try {
-//     const result_obj: ScanResult = JSON.parse(resultJson);
-//     console.log(result_obj);
-//     const mapped = result_obj.Annotations.map((annotation: ScanResultAnnotation) => 
-//       `{\"path\":\"${annotation.Path}\",\"annotation_level\":\"${annotation.Level}\",\"start_line\":${annotation.StartLine},\"end_line\":${annotation.EndLine},` + 
-//       `\"raw_details\":\"${annotation.RawDetails??"Keyword found"}\",\"message\":\"${annotation.Message??"Please look for keywords"}\",` +
-//       `\"title\":\"${annotation.Title}\"}`
-//       );
-//     const annotations = mapped.reduce((previousValue: string, currentValue: string) => previousValue ? previousValue + "," + currentValue : currentValue, "");
-
-//     console.log(annotations);
-    
-//     return annotations;
-//   } catch (e) {
-//     throw new Error('result_json is not json')
-//   }  
-// }
-
-// export function toPayloadAnnotations(annotations: ScanResultAnnotation[], start_index: number, end_index: number): string {
-//   if (!annotations) {
-//     return "";
-//   }
-//   core.debug(`So what are these annotations?:${annotations}`);
-
-//   const mapped = annotations.slice(start_index, end_index).map((annotation: ScanResultAnnotation) => 
-//     `{\"path\":\"${annotation.Path}\",\"annotation_level\":\"${annotation.Level}\",\"start_line\":${annotation.StartLine},\"end_line\":${annotation.EndLine},` + 
-//     `\"raw_details\":\"${annotation.RawDetails??"Keyword found"}\",\"message\":\"${annotation.Message??"Please look for keywords"}\",` +
-//     `\"title\":\"${annotation.Title}\"}`
-//     );
-//   const annotationsJsonString = mapped.reduce((previousValue: string, currentValue: string) => previousValue ? previousValue + "," + currentValue : currentValue, "");
-//   return annotationsJsonString;
-// }
-
-// export function createJsonPayload(resultJson: ScanResult, checkName: string, checkTitle: string, start_index: number, end_index: number): string {
-//   const payloadAnnotations = toPayloadAnnotations(resultJson.Annotations, start_index, end_index)
-
-//   if (!payloadAnnotations) {
-//     return "";
-//   }
-
-//   const jsonPayloadString = `{"name":"${checkName}","head_sha":"${resultJson.SourceId}","started_at":"${resultJson.ScanStartTime}","completed_at":"${resultJson.ScanEndTime}",` +
-//     `"status":"completed","conclusion":"success",` +
-//     `"output":{"title":"${checkTitle}","summary":"There are ${resultJson.ValidMatches.Blocker} blockers, ` + 
-//     `${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues.",` +
-//     `"text":"Please note that issues are highlighted only in files modified as part of this PR.","annotations":[${payloadAnnotations}]}}`;
-
-//   console.log(jsonPayloadString);
-
-//   return jsonPayloadString;
-// }
-
-function createOutputJson(resultJson: ScanResult, checkName: string, checkTitle: string, start_index: number, end_index: number): CheckOutput {
+function createOutputJson(resultJson: ScanResult, checkTitle: string, start_index: number, end_index: number): CheckOutput {
 
   console.log(resultJson);
   const mapped = resultJson.ScanMatches.slice(start_index, end_index).map((annotation: ScanMatch) => <ScanResultAnnotation>({path: annotation.Path,
@@ -109,20 +57,12 @@ function createOutputJson(resultJson: ScanResult, checkName: string, checkTitle:
   })
 }
 
-export function resultFromJson(resultJson: string): ScanResult {
-  try {
-    return JSON.parse(resultJson);
-  } catch (e) {
-    throw new Error('result_json is not json')
-  }
-}
-
-export async function createCheck(resultJson: ScanResult, checkName: string, checkTitle: string, owner: string, repo: string, authPAT: string, headSHA: string) {
+export async function createCheck(output_file_path: string, checkName: string, checkTitle: string, owner: string, repo: string, authPAT: string, headSHA: string) {
   core.debug("createCheck");
-  const scanResult = resultJson; //resultFromJson(resultJson);
+  var result_json: ScanResult = require(output_file_path);
 
   let startIndex = 0;
-  const indexStep = 1;
+  const indexStep = 50;
 
   const octokit = new Octokit({
     auth: authPAT,
@@ -133,7 +73,7 @@ export async function createCheck(resultJson: ScanResult, checkName: string, che
     
   core.debug(`octokit client:${octokit.rest}`);
   core.debug(`octokit client:${octokit.rest.checks}`);
-  let generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + indexStep);
+  let generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
     
   const response = await octokit.rest.checks.create({
     owner: owner,
@@ -158,24 +98,20 @@ export async function createCheck(resultJson: ScanResult, checkName: string, che
   //   output: generatedOutput
   // });
   startIndex += indexStep;
-  generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + indexStep);
+  generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
   while (generatedOutput.annotations.length > 0) {
     await octokit.request('PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}', {
       owner: owner,
       repo: repo,
       check_run_id: response.data.id,
       name: checkName,
-      // started_at: '2018-05-04T01:14:52Z',
-      // status: 'completed',
-      // conclusion: 'success',
-      // completed_at: '2018-05-04T01:14:52Z',
       output: generatedOutput,
       headers: {
         'X-GitHub-Api-Version': '2022-11-28'
       }
     })
     startIndex += indexStep;
-    generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + indexStep);
+    generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
   }
 
   core.debug(`Create check completed`);
