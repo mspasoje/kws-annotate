@@ -37,4 +37,4 @@ jobs:
           title: 'Legendary title'
           pat: ${{ secrets.GITHUB_TOKEN }}
           head_sha: ${{ github.sha }}
-          output_file_path: ${{ HOME }}/output_file.json
+          output_file_path: ${{ pwd }}/output_file.json
