@@ -213,7 +213,8 @@ function run() {
             const checkTitle = core.getInput('title');
             const pat = core.getInput('pat');
             const headSHA = core.getInput('head_sha');
-            var result_json = __nccwpck_require__(9757);
+            const output_file_path = core.getInput('output_file_path');
+            var result_json = require(output_file_path);
             core.debug(`Received this json: ${result_json} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
             const response = yield (0, create_annotations_1.createCheck)(result_json, checkName, checkTitle, owner, repo, pat, headSHA);
             core.debug(`response: ${response}`);
@@ -9473,14 +9474,6 @@ function wrappy (fn, cb) {
     return ret
   }
 }
-
-
-/***/ }),
-
-/***/ 9757:
-/***/ ((module) => {
-
-module.exports = eval("require")("./output_file.json");
 
 
 /***/ }),
