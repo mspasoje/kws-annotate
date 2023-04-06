@@ -62,7 +62,7 @@ export async function createCheck(output_file_path: string, checkName: string, c
   var result_json: ScanResult = require(output_file_path);
 
   let startIndex = 0;
-  const indexStep = 50;
+  const indexStep = 1;
 
   const octokit = new Octokit({
     auth: authPAT,

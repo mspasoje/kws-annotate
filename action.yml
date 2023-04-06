@@ -5,7 +5,7 @@ inputs:
   output_file_path:
     required: true
     description: 'file path to result json file produced by Keyword-Scanner'
-    default: '{}'
+    default: './output_file.json'
   owner:
     required: true
     description: 'owner'
