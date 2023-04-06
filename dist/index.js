@@ -136,8 +136,8 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
             owner: owner,
             repo: repo,
             name: checkName,
-            title: checkTitle,
-            head_sha: headSHA
+            head_sha: headSHA,
+            output: { title: checkTitle }
         });
         core.debug(`response:${response}`);
         core.debug(`response:${response.data}`);
@@ -155,6 +155,7 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
             owner: owner,
             repo: repo,
             check_run_in: response.data.id,
+            name: checkName,
             //    summary: checkName,
             //    head_sha: headSHA,
             output: generatedOutput
