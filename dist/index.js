@@ -203,10 +203,10 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
                           image_url: 'http://example.com/images/42'
                         }
                       ]*/
-            },
+            } /*,
             headers: {
-                'X-GitHub-Api-Version': '2022-11-28'
-            }
+              'X-GitHub-Api-Version': '2022-11-28'
+            }*/
         });
         core.debug(`Somi car opet`);
         //  core.debug(`patchCheckRunResponse:${JSON.stringify(updateResponse)}`);

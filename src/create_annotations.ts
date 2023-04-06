@@ -221,10 +221,10 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
           image_url: 'http://example.com/images/42'
         }
       ]*/
-    },
+    }/*,
     headers: {
       'X-GitHub-Api-Version': '2022-11-28'
-    }
+    }*/
   })
 
   core.debug(`Somi car opet`);
