@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: echo ::set-output name=file_location::$GITHUB_WORKSPACE/kws-annotate/output_file.json
+      - run: echo ::set-output name=file_location::$GITHUB_WORKSPACE/output_file.json
         id: file_locate
       - uses: ./
         with:
