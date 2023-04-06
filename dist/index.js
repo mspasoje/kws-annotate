@@ -103,7 +103,7 @@ function createOutputJson(resultJson, checkName, checkTitle, start_index, end_in
     }));
     return ({
         title: 'Great stuff!',
-        summary: `There are ${resultJson.ValidMatches.Blocker} blockers, ${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues."`,
+        summary: `There are ${resultJson.ValidMatches.Blocker} blockers, ${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues.`,
         annotations: mapped
     });
 }
@@ -147,8 +147,8 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
             owner: owner,
             repo: repo,
             check_run_in: response.data.id,
-            summary: checkName,
-            head_sha: headSHA,
+            //    summary: checkName,
+            //    head_sha: headSHA,
             output: generatedOutput
         });
         return response;

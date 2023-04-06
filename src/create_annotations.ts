@@ -114,7 +114,7 @@ function createOutputJson(resultJson: ScanResult, checkName: string, checkTitle:
 
   return <CheckOutput>({
     title: 'Great stuff!',
-    summary: `There are ${resultJson.ValidMatches.Blocker} blockers, ${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues."`,
+    summary: `There are ${resultJson.ValidMatches.Blocker} blockers, ${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues.`,
     annotations: mapped
   })
 }
@@ -164,8 +164,8 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
     owner: owner,
     repo: repo,
     check_run_in: response.data.id,
-    summary: checkName,
-    head_sha: headSHA,
+//    summary: checkName,
+//    head_sha: headSHA,
     output: generatedOutput
   });
 
