@@ -177,40 +177,41 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
             //    status: 'completed',
             //    conclusion: 'success',
             //    completed_at: '2018-05-04T01:14:52Z',
-            output: {
-                title: checkTitle,
-                summary: 'There are 0 failures, 2 warnings, and 1 notices.',
-                text: 'You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.',
-                /*      annotations: [
-                        {
-                          path: 'README.md',
-                          annotation_level: 'warning',
-                          title: 'Spell Checker',
-                          message: 'Check your spelling for \'banaas\'.',
-                          raw_details: 'Do you mean \'bananas\' or \'banana\'?',
-                          start_line: 2,
-                          end_line: 2
-                        },
-                        {
-                          path: 'README.md',
-                          annotation_level: 'warning',
-                          title: 'Spell Checker',
-                          message: 'Check your spelling for \'aples\'',
-                          raw_details: 'Do you mean \'apples\' or \'Naples\'',
-                          start_line: 4,
-                          end_line: 4
-                        }
-                      ],
-                      images: [
-                        {
-                          alt: 'Super bananas',
-                          image_url: 'http://example.com/images/42'
-                        }
-                      ]*/
-            } /*,
+            output: generatedOutput
+            /*    output: {
+                  title: checkTitle,
+                  summary: 'There are 0 failures, 2 warnings, and 1 notices.',
+                  text: 'You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.',
+                  annotations: [
+                    {
+                      path: 'README.md',
+                      annotation_level: 'warning',
+                      title: 'Spell Checker',
+                      message: 'Check your spelling for \'banaas\'.',
+                      raw_details: 'Do you mean \'bananas\' or \'banana\'?',
+                      start_line: 2,
+                      end_line: 2
+                    },
+                    {
+                      path: 'README.md',
+                      annotation_level: 'warning',
+                      title: 'Spell Checker',
+                      message: 'Check your spelling for \'aples\'',
+                      raw_details: 'Do you mean \'apples\' or \'Naples\'',
+                      start_line: 4,
+                      end_line: 4
+                    }
+                  ],
+                  images: [
+                    {
+                      alt: 'Super bananas',
+                      image_url: 'http://example.com/images/42'
+                    }
+                  ]
+                }*/ ,
             headers: {
-              'X-GitHub-Api-Version': '2022-11-28'
-            }*/
+                'X-GitHub-Api-Version': '2022-11-28'
+            }
         });
         // await octokit.rest.checks.update({
         //   owner: owner,

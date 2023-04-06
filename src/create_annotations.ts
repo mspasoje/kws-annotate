@@ -30,7 +30,7 @@ type ScanResultAnnotation1 = {
   path: string;
   start_line: number;
   end_line: number;
-  annotation_level: string;
+  annotation_level: "warning" | "failure" | "notice";
   message: string;
 };
 
@@ -195,11 +195,12 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
 //    status: 'completed',
 //    conclusion: 'success',
 //    completed_at: '2018-05-04T01:14:52Z',
-    output: {
+    output: generatedOutput
+/*    output: {
       title: checkTitle,
       summary: 'There are 0 failures, 2 warnings, and 1 notices.',
       text: 'You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.',
-/*      annotations: [
+      annotations: [
         {
           path: 'README.md',
           annotation_level: 'warning',
@@ -224,11 +225,11 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
           alt: 'Super bananas',
           image_url: 'http://example.com/images/42'
         }
-      ]*/
-    }/*,
+      ]
+    }*/,
     headers: {
       'X-GitHub-Api-Version': '2022-11-28'
-    }*/
+    }
   })
   // await octokit.rest.checks.update({
   //   owner: owner,
