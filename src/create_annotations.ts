@@ -18,7 +18,7 @@ type ValidMatches = {
   Informational: number;
 };
 
-type ScanResult = {
+export type ScanResult = {
   ValidMatches: ValidMatches;
   SourceId: string;
   ScanStartTime: string;
@@ -40,7 +40,7 @@ type CheckOutput = {
   annotations: ScanResultAnnotation[];
 };
 
-function createOutputJson(resultJson: ScanResult, checkTitle: string, startIndex: number, endIndex: number): CheckOutput {
+export function createOutputJson(resultJson: ScanResult, checkTitle: string, startIndex: number, endIndex: number): CheckOutput {
 
   console.log(resultJson);
   const mapped = resultJson.ScanMatches.slice(startIndex, endIndex).map((annotation: ScanMatch) => <ScanResultAnnotation>({path: annotation.Path,

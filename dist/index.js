@@ -35,7 +35,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createCheck = void 0;
+exports.createCheck = exports.createOutputJson = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const rest_1 = __nccwpck_require__(5375);
 function createOutputJson(resultJson, checkTitle, startIndex, endIndex) {
@@ -52,6 +52,7 @@ function createOutputJson(resultJson, checkTitle, startIndex, endIndex) {
         annotations: mapped
     });
 }
+exports.createOutputJson = createOutputJson;
 function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT, headSHA) {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug("createCheck");
