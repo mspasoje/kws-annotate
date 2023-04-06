@@ -3,7 +3,6 @@ import {createCheck} from './create_annotations'
 
 async function run(): Promise<void> {
   try {
-//    const result_json: string = core.getInput('result_json');
     const owner: string = core.getInput('owner');
     const repo: string = core.getInput('repo');
     const checkName: string = core.getInput('name');

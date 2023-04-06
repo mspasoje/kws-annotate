@@ -151,7 +151,6 @@ const create_annotations_1 = __nccwpck_require__(5581);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            //    const result_json: string = core.getInput('result_json');
             const owner = core.getInput('owner');
             const repo = core.getInput('repo');
             const checkName = core.getInput('name');

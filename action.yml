@@ -2,9 +2,9 @@ name: 'Miodrag Spasojevic'
 description: 'Used to annotate based on a json input'
 author: 'AMD'
 inputs:
-  result_json:
+  output_file_path:
     required: true
-    description: 'json string input for annotations'
+    description: 'file path to result json file produced by Keyword-Scanner'
     default: '{}'
   owner:
     required: true
