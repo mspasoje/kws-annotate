@@ -174,11 +174,12 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
     owner: owner,
     repo: repo,
     check_run_in: response.data.id,
-    status: "queued",
-    name: checkName,
+//    name: checkName,
 //    summary: checkName,
-    head_sha: headSHA,
+//    head_sha: headSHA,
 //    output: generatedOutput
+    status: "in_progress",
+//    started_at: startTime.toISOString()
   });
 
   core.debug(`Somi car opet`);

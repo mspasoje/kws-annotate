@@ -155,13 +155,15 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
             owner: owner,
             repo: repo,
             check_run_in: response.data.id,
-            status: "queued",
-            name: checkName,
+            //    name: checkName,
             //    summary: checkName,
-            head_sha: headSHA,
+            //    head_sha: headSHA,
             //    output: generatedOutput
+            status: "in_progress",
+            //    started_at: startTime.toISOString()
         });
-        core.debug(`getCheckRunResponse:${JSON.stringify(updateResponse)}`);
+        core.debug(`Somi car opet`);
+        core.debug(`patchCheckRunResponse:${JSON.stringify(updateResponse)}`);
         return response;
     });
 }
