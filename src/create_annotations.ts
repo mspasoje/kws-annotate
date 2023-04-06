@@ -117,9 +117,9 @@ export function resultFromJson(resultJson: string): ScanResult {
   }
 }
 
-export async function createCheck(resultJson: string, checkName: string, checkTitle: string, owner: string, repo: string, authPAT: string, headSHA: string) {
+export async function createCheck(resultJson: ScanResult, checkName: string, checkTitle: string, owner: string, repo: string, authPAT: string, headSHA: string) {
   core.debug("createCheck");
-  const scanResult = resultFromJson(resultJson);
+  const scanResult = resultJson; //resultFromJson(resultJson);
 
   let startIndex = 0;
   const indexStep = 1;

@@ -106,7 +106,7 @@ exports.resultFromJson = resultFromJson;
 function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, headSHA) {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug("createCheck");
-        const scanResult = resultFromJson(resultJson);
+        const scanResult = resultJson; //resultFromJson(resultJson);
         let startIndex = 0;
         const indexStep = 1;
         const octokit = new rest_1.Octokit({
