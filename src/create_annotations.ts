@@ -181,7 +181,10 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
 //    output: generatedOutput
   });
 
-  core.debug(`getCheckRunResponse:${JSON.stringify(updateResponse)}`);
+  core.debug(`Somi car opet`);
+  
+
+  core.debug(`patchCheckRunResponse:${JSON.stringify(updateResponse)}`);
   
 
   return response;
