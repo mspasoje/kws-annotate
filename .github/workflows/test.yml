@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo '{"ValidMatches":{"Blocker":0,"Warning":1,"ShouldBeFixed":2,"Informational":3},"ScanStartTime":"01-01-23","ScanEndTime":"01-01-23","SourceId":"${{github.sha}}","Annotations":[{"Path":".github/workflows/test.yml","Level":"warning","StartLine":26,"EndLine":26,"Message":"Some stuff"},{"Path":".github/workflows/test.yml","Level":"failure","StartLine":21,"EndLine":21,"Message":"Some stuff"}]}' > output_file.json
+          echo '{"ValidMatches":{"Blocker":0,"Warning":1,"ShouldBeFixed":2,"Informational":3},"ScanStartTime":"01-01-23","ScanEndTime":"01-01-23","SourceId":"${{github.sha}}","ScanMatches":[{"Path":".github/workflows/test.yml","KeyWordSeverity":"ShouldBeFixed","StartLine":26,"EndLine":26,"Message":"We found a word 'bird' here."},{"Path":".github/workflows/test.yml","KeyWordSeverity":"Blocker","StartLine":21,"EndLine":21,"Message":"We found a word 'eagle' here."}]}' > output_file.json
       - run: |
           cat output_file.json
   test: # make sure the action works on a clean machine without building
@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./
         with:
-          result_json: '{"ValidMatches":{"Blocker":0,"Warning":1,"ShouldBeFixed":2,"Informational":3},"ScanStartTime":"01-01-23","ScanEndTime":"01-01-23","SourceId":"${{github.sha}}","Annotations":[{"Path":".github/workflows/test.yml","Level":"warning","StartLine":26,"EndLine":26,"Message":"Some stuff"},{"Path":".github/workflows/test.yml","Level":"failure","StartLine":21,"EndLine":21,"Message":"Some stuff"}]}'
+          result_json: '{"ValidMatches":{"Blocker":0,"Warning":1,"ShouldBeFixed":2,"Informational":3},"ScanStartTime":"01-01-23","ScanEndTime":"01-01-23","SourceId":"${{github.sha}}","ScanMatches":[{"Path":".github/workflows/test.yml","KeyWordSeverity":"ShouldBeFixed","StartLine":26,"EndLine":26,"Message":"We found a word 'bird' here."},{"Path":".github/workflows/test.yml","KeyWordSeverity":"Blocker","StartLine":21,"EndLine":21,"Message":"We found a word 'eagle' here."}]}'
           owner: 'mspasoje'
           repo: 'kws-annotate'
           name: 'Some nice name'

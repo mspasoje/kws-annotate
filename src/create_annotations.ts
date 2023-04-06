@@ -1,15 +1,15 @@
 import * as core from '@actions/core'
 import {Octokit} from '@octokit/rest';
 
-type ScanResultAnnotation = {
-  Path: string;
-  Level: string;
+type ScanMatch = {
   StartLine: number;
   EndLine: number;
-  RawDetails: string;
+  StartColumn: number;
+  EndColumn: number;
+  Path: string;
+  KeyWordSeverity: "Warning" | "Blocker" | "ShouldBeFixed" | "Informational";
   Message: string;
-  Title: string;
-};
+}
 
 type ValidMatches = {
   Blocker: number;
@@ -23,10 +23,10 @@ type ScanResult = {
   SourceId: string;
   ScanStartTime: string;
   ScanEndTime: string;
-  Annotations: ScanResultAnnotation[];
+  ScanMatches: ScanMatch[];
 };
 
-type ScanResultAnnotation1 = {
+type ScanResultAnnotation = {
   path: string;
   start_line: number;
   end_line: number;
@@ -37,7 +37,7 @@ type ScanResultAnnotation1 = {
 type CheckOutput = {
   title: string;
   summary: string;
-  annotations: ScanResultAnnotation1[];
+  annotations: ScanResultAnnotation[];
 };
 
 // export function createAnnotationsJson(resultJson: string, start_index: number, end_index: number): string {
@@ -95,10 +95,10 @@ type CheckOutput = {
 function createOutputJson(resultJson: ScanResult, checkName: string, checkTitle: string, start_index: number, end_index: number): CheckOutput {
 
   console.log(resultJson);
-  const mapped = resultJson.Annotations.slice(start_index, end_index).map((annotation: ScanResultAnnotation) => <ScanResultAnnotation1>({path: annotation.Path,
+  const mapped = resultJson.ScanMatches.slice(start_index, end_index).map((annotation: ScanMatch) => <ScanResultAnnotation>({path: annotation.Path,
     start_line: annotation.StartLine,
     end_line: annotation.EndLine,
-    annotation_level: annotation.Level,
+    annotation_level: annotation.KeyWordSeverity === "Blocker" ? "failure" : (annotation.KeyWordSeverity === "Informational" ? "notice" : "warning"),
     message: annotation.Message
   }));
 
@@ -120,13 +120,10 @@ export function resultFromJson(resultJson: string): ScanResult {
 export async function createCheck(resultJson: string, checkName: string, checkTitle: string, owner: string, repo: string, authPAT: string, headSHA: string) {
   core.debug("createCheck");
   const scanResult = resultFromJson(resultJson);
-  core.debug("got scan result");
-  core.debug(`scanResult:${scanResult}`);
+
   let startIndex = 0;
   const indexStep = 1;
-//  const jsonPayload = createJsonPayload(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
 
-//  core.debug(`jsonPayload:${jsonPayload}`);
   const octokit = new Octokit({
     auth: authPAT,
     userAgent: 'KWS Annotate GH Action v1',
@@ -145,25 +142,14 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
     head_sha: headSHA,
     status: 'completed',
     conclusion: 'success',
-//    started_at: '2018-05-04T01:14:52Z',
-//    completed_at: '2018-05-04T01:14:52Z',
     output: generatedOutput
   });
-
-  core.debug(`response:${response}`);
-  core.debug(`response:${response.data}`);
-  core.debug(`response:${response.data.id}`);
-
-  core.debug(`generatedOutput:${JSON.stringify(generatedOutput)}`);
-
 
   // const getCheckRunResponse = await octokit.rest.checks.get({
   //   owner,
   //   repo,
   //   check_run_id: response.data.id,
   // });
-  // core.debug(`getCheckRunResponse:${getCheckRunResponse.status}`);
-  // core.debug(`getCheckRunResponse:${JSON.stringify(getCheckRunResponse.data)}`);
 
   // const updateResponse = await octokit.rest.checks.update({
   //   owner: owner,
@@ -192,7 +178,7 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
     generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + indexStep);
   }
 
-  core.debug(`Somi car opet`);
+  core.debug(`Create check completed`);
 
   return response;
 }

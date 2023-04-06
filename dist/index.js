@@ -82,10 +82,10 @@ const rest_1 = __nccwpck_require__(5375);
 // }
 function createOutputJson(resultJson, checkName, checkTitle, start_index, end_index) {
     console.log(resultJson);
-    const mapped = resultJson.Annotations.slice(start_index, end_index).map((annotation) => ({ path: annotation.Path,
+    const mapped = resultJson.ScanMatches.slice(start_index, end_index).map((annotation) => ({ path: annotation.Path,
         start_line: annotation.StartLine,
         end_line: annotation.EndLine,
-        annotation_level: annotation.Level,
+        annotation_level: annotation.KeyWordSeverity === "Blocker" ? "failure" : (annotation.KeyWordSeverity === "Informational" ? "notice" : "warning"),
         message: annotation.Message
     }));
     return ({
@@ -107,12 +107,8 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
     return __awaiter(this, void 0, void 0, function* () {
         core.debug("createCheck");
         const scanResult = resultFromJson(resultJson);
-        core.debug("got scan result");
-        core.debug(`scanResult:${scanResult}`);
         let startIndex = 0;
         const indexStep = 1;
-        //  const jsonPayload = createJsonPayload(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
-        //  core.debug(`jsonPayload:${jsonPayload}`);
         const octokit = new rest_1.Octokit({
             auth: authPAT,
             userAgent: 'KWS Annotate GH Action v1',
@@ -129,21 +125,13 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
             head_sha: headSHA,
             status: 'completed',
             conclusion: 'success',
-            //    started_at: '2018-05-04T01:14:52Z',
-            //    completed_at: '2018-05-04T01:14:52Z',
             output: generatedOutput
         });
-        core.debug(`response:${response}`);
-        core.debug(`response:${response.data}`);
-        core.debug(`response:${response.data.id}`);
-        core.debug(`generatedOutput:${JSON.stringify(generatedOutput)}`);
         // const getCheckRunResponse = await octokit.rest.checks.get({
         //   owner,
         //   repo,
         //   check_run_id: response.data.id,
         // });
-        // core.debug(`getCheckRunResponse:${getCheckRunResponse.status}`);
-        // core.debug(`getCheckRunResponse:${JSON.stringify(getCheckRunResponse.data)}`);
         // const updateResponse = await octokit.rest.checks.update({
         //   owner: owner,
         //   repo: repo,
@@ -170,7 +158,7 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
             startIndex += indexStep;
             generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + indexStep);
         }
-        core.debug(`Somi car opet`);
+        core.debug(`Create check completed`);
         return response;
     });
 }
@@ -218,19 +206,17 @@ const create_annotations_1 = __nccwpck_require__(5581);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            core.debug('Somi car');
-            const result_json = core.getInput('result_json');
+            //    const result_json: string = core.getInput('result_json');
             const owner = core.getInput('owner');
             const repo = core.getInput('repo');
             const checkName = core.getInput('name');
             const checkTitle = core.getInput('title');
             const pat = core.getInput('pat');
             const headSHA = core.getInput('head_sha');
+            var result_json = __nccwpck_require__(9757);
             core.debug(`Received this json: ${result_json} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-            core.debug(new Date().toTimeString());
-            core.debug(headSHA);
             const response = yield (0, create_annotations_1.createCheck)(result_json, checkName, checkTitle, owner, repo, pat, headSHA);
-            core.debug(`${response.data}`);
+            core.debug(`response: ${response}`);
         }
         catch (error) {
             if (error instanceof Error)
@@ -9487,6 +9473,14 @@ function wrappy (fn, cb) {
     return ret
   }
 }
+
+
+/***/ }),
+
+/***/ 9757:
+/***/ ((module) => {
+
+module.exports = eval("require")("./output_file.json");
 
 
 /***/ }),
