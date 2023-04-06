@@ -26,6 +26,8 @@ jobs:
   test: # make sure the action works on a clean machine without building
     needs: seed_file
     runs-on: ubuntu-latest
+    env:
+      input: HOME
     steps:
       - uses: actions/checkout@v3
       - uses: ./
@@ -37,4 +39,4 @@ jobs:
           title: 'Legendary title'
           pat: ${{ secrets.GITHUB_TOKEN }}
           head_sha: ${{ github.sha }}
-          output_file_path: ${{ pwd }}/output_file.json
+          output_file_path: ${{ env.input }}/output_file.json
