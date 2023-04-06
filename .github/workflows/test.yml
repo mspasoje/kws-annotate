@@ -16,7 +16,15 @@ jobs:
           npm install
       - run: |
           npm run all
+  seed_file: # make sure build/ci work properly
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo '{"ValidMatches":{"Blocker":0,"Warning":1,"ShouldBeFixed":2,"Informational":3},"ScanStartTime":"01-01-23","ScanEndTime":"01-01-23","SourceId":"${{github.sha}}","Annotations":[{"Path":".github/workflows/test.yml","Level":"warning","StartLine":26,"EndLine":26,"Message":"Some stuff"},{"Path":".github/workflows/test.yml","Level":"failure","StartLine":21,"EndLine":21,"Message":"Some stuff"}]}' > output_file.json
+      - run: |
+          cat output_file.json
   test: # make sure the action works on a clean machine without building
+    needs: seed_file
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
