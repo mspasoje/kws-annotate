@@ -161,6 +161,15 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
   const generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
   core.debug(`generatedOutput:${JSON.stringify(generatedOutput)}`);
 
+
+  const getCheckRunResponse = await octokit.rest.checks.get({
+    owner,
+    repo,
+    check_run_id: response.data.id,
+  });
+  core.debug(`getCheckRunResponse:${getCheckRunResponse.status}`);
+  core.debug(`getCheckRunResponse:${JSON.stringify(getCheckRunResponse.data)}`);
+
   const updateResponse = await octokit.rest.checks.update({
     owner: owner,
     repo: repo,

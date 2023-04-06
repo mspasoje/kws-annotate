@@ -144,6 +144,13 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
         core.debug(`response:${response.data.id}`);
         const generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
         core.debug(`generatedOutput:${JSON.stringify(generatedOutput)}`);
+        const getCheckRunResponse = yield octokit.rest.checks.get({
+            owner,
+            repo,
+            check_run_id: response.data.id,
+        });
+        core.debug(`getCheckRunResponse:${getCheckRunResponse.status}`);
+        core.debug(`getCheckRunResponse:${JSON.stringify(getCheckRunResponse.data)}`);
         const updateResponse = yield octokit.rest.checks.update({
             owner: owner,
             repo: repo,
