@@ -74,6 +74,8 @@ function createCheck(output_file_path, checkName, checkTitle, owner, repo, authP
             name: checkName,
             head_sha: headSHA,
             status: 'completed',
+            started_at: '2018-05-04T01:14:52Z',
+            completed_at: '2018-05-04T01:14:52Z',
             conclusion: 'success',
             output: generatedOutput
         });

@@ -82,6 +82,8 @@ export async function createCheck(output_file_path: string, checkName: string, c
     name: checkName,
     head_sha: headSHA,
     status: 'completed',
+    started_at: '2018-05-04T01:14:52Z',
+    completed_at: '2018-05-04T01:14:52Z',
     conclusion: 'success',
     output: generatedOutput
   });
