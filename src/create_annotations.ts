@@ -35,6 +35,7 @@ type ScanResultAnnotation1 = {
 };
 
 type CheckOutput = {
+  title: string;
   summary: string;
   annotations: ScanResultAnnotation1[];
 };
@@ -112,6 +113,7 @@ function createOutputJson(resultJson: ScanResult, checkName: string, checkTitle:
   }));
 
   return <CheckOutput>({
+    title: 'Great stuff!',
     summary: `There are ${resultJson.ValidMatches.Blocker} blockers, ${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues."`,
     annotations: mapped
   })
@@ -156,7 +158,7 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
   core.debug(`response:${response.data.id}`);
 
   const generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
-  core.debug(`generatedOutput:${generatedOutput}`);
+  core.debug(`generatedOutput:${JSON.stringify(generatedOutput)}`);
 
   const updateResponse = await octokit.rest.checks.update({
     owner: owner,

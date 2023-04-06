@@ -102,6 +102,7 @@ function createOutputJson(resultJson, checkName, checkTitle, start_index, end_in
         message: annotation.Message
     }));
     return ({
+        title: 'Great stuff!',
         summary: `There are ${resultJson.ValidMatches.Blocker} blockers, ${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues."`,
         annotations: mapped
     });
@@ -141,7 +142,7 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
         core.debug(`response:${response.data}`);
         core.debug(`response:${response.data.id}`);
         const generatedOutput = createOutputJson(scanResult, checkName, checkTitle, startIndex, startIndex + 50);
-        core.debug(`generatedOutput:${generatedOutput}`);
+        core.debug(`generatedOutput:${JSON.stringify(generatedOutput)}`);
         const updateResponse = yield octokit.rest.checks.update({
             owner: owner,
             repo: repo,
