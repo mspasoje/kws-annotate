@@ -38,9 +38,9 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.createCheck = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const rest_1 = __nccwpck_require__(5375);
-function createOutputJson(resultJson, checkTitle, start_index, end_index) {
+function createOutputJson(resultJson, checkTitle, startIndex, endIndex) {
     console.log(resultJson);
-    const mapped = resultJson.ScanMatches.slice(start_index, end_index).map((annotation) => ({ path: annotation.Path,
+    const mapped = resultJson.ScanMatches.slice(startIndex, endIndex).map((annotation) => ({ path: annotation.Path,
         start_line: annotation.StartLine,
         end_line: annotation.EndLine,
         annotation_level: annotation.KeyWordSeverity === "Blocker" ? "failure" : (annotation.KeyWordSeverity === "Informational" ? "notice" : "warning"),
@@ -52,10 +52,10 @@ function createOutputJson(resultJson, checkTitle, start_index, end_index) {
         annotations: mapped
     });
 }
-function createCheck(output_file_path, checkName, checkTitle, owner, repo, authPAT, headSHA) {
+function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT, headSHA) {
     return __awaiter(this, void 0, void 0, function* () {
         core.debug("createCheck");
-        var result_json = require(output_file_path);
+        var result_json = require(outputFilePath);
         let startIndex = 0;
         const indexStep = 50;
         const octokit = new rest_1.Octokit({
@@ -81,17 +81,6 @@ function createCheck(output_file_path, checkName, checkTitle, owner, repo, authP
         });
         core.debug(`octokit client:${response.status}`);
         core.debug(`octokit client:${response.data}`);
-        // const getCheckRunResponse = await octokit.rest.checks.get({
-        //   owner,
-        //   repo,
-        //   check_run_id: response.data.id,
-        // });
-        // const updateResponse = await octokit.rest.checks.update({
-        //   owner: owner,
-        //   repo: repo,
-        //   check_run_in: response.data.id,
-        //   output: generatedOutput
-        // });
         startIndex += indexStep;
         generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
         core.debug(`first generatedOutput.annotations:${generatedOutput.annotations.length}`);
@@ -164,9 +153,15 @@ function run() {
             const checkTitle = core.getInput('title');
             const pat = core.getInput('pat');
             const headSHA = core.getInput('head_sha');
-            const output_file_path = core.getInput('output_file_path');
-            //    core.debug(`Received this json: ${result_json} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-            const response = yield (0, create_annotations_1.createCheck)(output_file_path, checkName, checkTitle, owner, repo, pat, headSHA);
+            const outputFilePath = core.getInput('output_file_path');
+            core.debug(`input arg owner: ${owner}`);
+            core.debug(`input arg repo: ${repo}`);
+            core.debug(`input arg checkName: ${checkName}`);
+            core.debug(`input arg checkTitle: ${checkTitle}`);
+            core.debug(`input arg pat: ${pat}`);
+            core.debug(`input arg headSHA: ${headSHA}`);
+            core.debug(`input arg headSHA: ${headSHA}`);
+            const response = yield (0, create_annotations_1.createCheck)(outputFilePath, checkName, checkTitle, owner, repo, pat, headSHA);
             core.debug(`response: ${response}`);
         }
         catch (error) {

@@ -40,10 +40,10 @@ type CheckOutput = {
   annotations: ScanResultAnnotation[];
 };
 
-function createOutputJson(resultJson: ScanResult, checkTitle: string, start_index: number, end_index: number): CheckOutput {
+function createOutputJson(resultJson: ScanResult, checkTitle: string, startIndex: number, endIndex: number): CheckOutput {
 
   console.log(resultJson);
-  const mapped = resultJson.ScanMatches.slice(start_index, end_index).map((annotation: ScanMatch) => <ScanResultAnnotation>({path: annotation.Path,
+  const mapped = resultJson.ScanMatches.slice(startIndex, endIndex).map((annotation: ScanMatch) => <ScanResultAnnotation>({path: annotation.Path,
     start_line: annotation.StartLine,
     end_line: annotation.EndLine,
     annotation_level: annotation.KeyWordSeverity === "Blocker" ? "failure" : (annotation.KeyWordSeverity === "Informational" ? "notice" : "warning"),
@@ -57,9 +57,9 @@ function createOutputJson(resultJson: ScanResult, checkTitle: string, start_inde
   })
 }
 
-export async function createCheck(output_file_path: string, checkName: string, checkTitle: string, owner: string, repo: string, authPAT: string, headSHA: string) {
+export async function createCheck(outputFilePath: string, checkName: string, checkTitle: string, owner: string, repo: string, authPAT: string, headSHA: string) {
   core.debug("createCheck");
-  var result_json: ScanResult = require(output_file_path);
+  var result_json: ScanResult = require(outputFilePath);
 
   let startIndex = 0;
   const indexStep = 50;
@@ -90,18 +90,6 @@ export async function createCheck(output_file_path: string, checkName: string, c
   core.debug(`octokit client:${response.status}`);
   core.debug(`octokit client:${response.data}`);
 
-  // const getCheckRunResponse = await octokit.rest.checks.get({
-  //   owner,
-  //   repo,
-  //   check_run_id: response.data.id,
-  // });
-
-  // const updateResponse = await octokit.rest.checks.update({
-  //   owner: owner,
-  //   repo: repo,
-  //   check_run_in: response.data.id,
-  //   output: generatedOutput
-  // });
   startIndex += indexStep;
   generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
   core.debug(`first generatedOutput.annotations:${generatedOutput.annotations.length}`);

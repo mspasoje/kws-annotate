@@ -9,15 +9,18 @@ async function run(): Promise<void> {
     const checkTitle: string = core.getInput('title');
     const pat: string = core.getInput('pat');
     const headSHA: string = core.getInput('head_sha');
-    const output_file_path: string = core.getInput('output_file_path');
+    const outputFilePath: string = core.getInput('output_file_path');
 
+    core.debug(`input arg owner: ${owner}`);
+    core.debug(`input arg repo: ${repo}`);
+    core.debug(`input arg checkName: ${checkName}`);
+    core.debug(`input arg checkTitle: ${checkTitle}`);
+    core.debug(`input arg pat: ${pat}`);
+    core.debug(`input arg headSHA: ${headSHA}`);
+    core.debug(`input arg headSHA: ${headSHA}`);
+    const response = await createCheck(outputFilePath, checkName, checkTitle, owner, repo, pat, headSHA);
 
-//    core.debug(`Received this json: ${result_json} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-
-    const response = await createCheck(output_file_path, checkName, checkTitle, owner, repo, pat, headSHA);
     core.debug(`response: ${response}`);
-
-
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message);
   }
