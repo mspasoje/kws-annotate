@@ -155,6 +155,7 @@ function createCheck(resultJson, checkName, checkTitle, owner, repo, authPAT, he
             owner: owner,
             repo: repo,
             check_run_in: response.data.id,
+            status: "queued",
             name: checkName,
             //    summary: checkName,
             //    head_sha: headSHA,
