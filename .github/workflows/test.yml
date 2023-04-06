@@ -41,4 +41,4 @@ jobs:
           title: 'Legendary title'
           pat: ${{ secrets.GITHUB_TOKEN }}
           head_sha: ${{ github.sha }}
-          output_file_path: ${{ GITHUB_WORKSPACE }}//kws-annotate/output_file.json
+          output_file_path: $GITHUB_WORKSPACE/kws-annotate/output_file.json
