@@ -74,6 +74,7 @@ export async function createCheck(output_file_path: string, checkName: string, c
   core.debug(`octokit client:${octokit.rest}`);
   core.debug(`octokit client:${octokit.rest.checks}`);
   let generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
+  core.debug(`initial generatedOutput.annotations:${generatedOutput.annotations.length}`);
     
   const response = await octokit.rest.checks.create({
     owner: owner,
@@ -99,6 +100,7 @@ export async function createCheck(output_file_path: string, checkName: string, c
   // });
   startIndex += indexStep;
   generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
+  core.debug(`first generatedOutput.annotations:${generatedOutput.annotations.length}`);
   while (generatedOutput.annotations.length > 0) {
     await octokit.request('PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}', {
       owner: owner,
@@ -112,6 +114,7 @@ export async function createCheck(output_file_path: string, checkName: string, c
     })
     startIndex += indexStep;
     generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
+    core.debug(`loop generatedOutput.annotations:${generatedOutput.annotations.length}`);
   }
 
   core.debug(`Create check completed`);

@@ -67,6 +67,7 @@ function createCheck(output_file_path, checkName, checkTitle, owner, repo, authP
         core.debug(`octokit client:${octokit.rest}`);
         core.debug(`octokit client:${octokit.rest.checks}`);
         let generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
+        core.debug(`initial generatedOutput.annotations:${generatedOutput.annotations.length}`);
         const response = yield octokit.rest.checks.create({
             owner: owner,
             repo: repo,
@@ -89,6 +90,7 @@ function createCheck(output_file_path, checkName, checkTitle, owner, repo, authP
         // });
         startIndex += indexStep;
         generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
+        core.debug(`first generatedOutput.annotations:${generatedOutput.annotations.length}`);
         while (generatedOutput.annotations.length > 0) {
             yield octokit.request('PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}', {
                 owner: owner,
@@ -102,6 +104,7 @@ function createCheck(output_file_path, checkName, checkTitle, owner, repo, authP
             });
             startIndex += indexStep;
             generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
+            core.debug(`loop generatedOutput.annotations:${generatedOutput.annotations.length}`);
         }
         core.debug(`Create check completed`);
         return response;
