@@ -1,0 +1,25 @@
+    "ValidMatches":{
+        "Blocker":0,
+        "Warning":2,
+        "ShouldBeFixed":2,
+        "Informational":3
+    },
+    "ScanStartTime":"01-01-23",
+    "ScanEndTime":"01-01-23",
+    "SourceId":"${{github.sha}}",
+    "ScanMatches":[
+        {
+            "Path":".github/workflows/test.yml",
+            "KeyWordSeverity":"ShouldBeFixed",
+            "StartLine":26,
+            "EndLine":26,
+            "Message":"We found a word 'bird' here."
+        },{
+            "Path":".github/workflows/test.yml",
+            "KeyWordSeverity":"Blocker",
+            "StartLine":21,
+            "EndLine":21,
+            "Message":"We found a word 'eagle' here."
+        }
+    ]
+}

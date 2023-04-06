@@ -1,42 +1,20 @@
-import {resultFromJson} from '../src/create_annotations'
 import * as process from 'process'
 import * as cp from 'child_process'
 import * as path from 'path'
 import {expect, test} from '@jest/globals'
 
-test('throws invalid json', async () => {
-  const result_json = '\
-    "Annotations": [{\
-            "Path": "blah blah",\
-            "Level": "error",\
-            "StartLine": 20,\
-            "EndLine": 20\
-    }, {\
-            "Path": "blah blah",\
-            "Level": "warning",\
-            "StartLine": 22,\
-            "EndLine": 22\
-    }]}';
-
-  expect(() => resultFromJson(result_json)).toThrow('result_json is not json');
+test('throws invalid json file', async () => {
+  expect(() => require('./test_output_invalid.json')).toThrow('Unexpected token : in JSON at position 18');
 })
 
-// shows how the runner will run a javascript action with env / stdout protocol
 test('test runs', () => {
-  process.env['INPUT_RESULT_JSON'] = '{\
-      "Annotations": [{\
-        "Path": "blah blah",\
-        "Level": "error",\
-        "StartLine": 20,\
-        "EndLine": 20\
-  }, {\
-        "Path": "blah blah",\
-        "Level": "warning",\
-        "StartLine": 22,\
-        "EndLine": 22\
-  }]}';
   process.env['INPUT_OWNER'] = 'TEST_OWNER';
   process.env['INPUT_REPO'] = 'TEST_REPO';
+  process.env['INPUT_NAME'] = 'TEST_NAME';
+  process.env['INPUT_TITLE'] = 'TEST_TITLE';
+  process.env['INPUT_PAT'] = 'TEST_PAT';
+  process.env['INPUT_HEAD_SHA'] = 'TEST_HEAD_SHA';
+  process.env['INPUT_OUTPUT_FILE_PATH'] = './test_output.json';
 
   const np = process.execPath
   const ip = path.join(__dirname, '..', 'lib', 'main.js')
