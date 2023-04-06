@@ -226,6 +226,17 @@ export async function createCheck(resultJson: string, checkName: string, checkTi
       'X-GitHub-Api-Version': '2022-11-28'
     }*/
   })
+  await octokit.rest.checks.update({
+    owner: owner,
+    repo: repo,
+    check_run_in: response.data.id,
+    name: checkName,
+    output: {
+      title: checkTitle,
+      summary: 'There are 0 failures, 2 warnings, and 1 notices.',
+      text: 'You may have some misspelled words on lines 2 and 4. You also may want to add a section in your README about how to install your app.',
+    }
+  });
 
   core.debug(`Somi car opet${breakItMaybe}`);
   
