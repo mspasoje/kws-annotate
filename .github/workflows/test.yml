@@ -21,7 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          echo '{"ValidMatches":{"Blocker":0,"Warning":1,"ShouldBeFixed":2,"Informational":3},"ScanStartTime":"01-01-23","ScanEndTime":"01-01-23","SourceId":"${{github.sha}}","ScanMatches":[{"Path":".github/workflows/test.yml","KeyWordSeverity":"ShouldBeFixed","StartLine":26,"EndLine":26,"Message":"We found a word 'bird' here."},{"Path":".github/workflows/test.yml","KeyWordSeverity":"Blocker","StartLine":21,"EndLine":21,"Message":"We found a word 'eagle' here."}]}' > $GITHUB_WORKSPACE/dist/output_file.json      - uses: ./
+          echo '{"ValidMatches":{"Blocker":0,"Warning":1,"ShouldBeFixed":2,"Informational":3},"ScanStartTime":"01-01-23","ScanEndTime":"01-01-23","SourceId":"${{github.sha}}","ScanMatches":[{"Path":".github/workflows/test.yml","KeyWordSeverity":"ShouldBeFixed","StartLine":26,"EndLine":26,"Message":"We found a word 'bird' here."},{"Path":".github/workflows/test.yml","KeyWordSeverity":"Blocker","StartLine":21,"EndLine":21,"Message":"We found a word 'eagle' here."}]}' > $GITHUB_WORKSPACE/dist/output_file.json
+      - run: |
+          ls $GITHUB_WORKSPACE/dist/
       - uses: ./
         with:
           result_json: '{"ValidMatches":{"Blocker":0,"Warning":1,"ShouldBeFixed":2,"Informational":3},"ScanStartTime":"01-01-23","ScanEndTime":"01-01-23","SourceId":"${{github.sha}}","ScanMatches":[{"Path":".github/workflows/test.yml","KeyWordSeverity":"ShouldBeFixed","StartLine":26,"EndLine":26,"Message":"We found a word bird here."},{"Path":".github/workflows/test.yml","KeyWordSeverity":"Blocker","StartLine":21,"EndLine":21,"Message":"We found a word eagle here."}]}'
@@ -31,4 +33,4 @@ jobs:
           title: 'Legendary title'
           pat: ${{ secrets.GITHUB_TOKEN }}
           head_sha: ${{ github.sha }}
-          output_file_path: output_file.json
+          output_file_path: ./output_file.json
