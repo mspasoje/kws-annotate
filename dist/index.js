@@ -102,7 +102,7 @@ function createOutputJson(resultJson, checkName, checkTitle, start_index, end_in
         message: annotation.Message
     }));
     return ({
-        title: 'Great stuff!',
+        title: checkTitle,
         summary: `There are ${resultJson.ValidMatches.Blocker} blockers, ${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues.`,
         annotations: mapped
     });
