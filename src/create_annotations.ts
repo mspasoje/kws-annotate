@@ -87,6 +87,8 @@ export async function createCheck(output_file_path: string, checkName: string, c
     conclusion: 'success',
     output: generatedOutput
   });
+  core.debug(`octokit client:${response.status}`);
+  core.debug(`octokit client:${response.data}`);
 
   // const getCheckRunResponse = await octokit.rest.checks.get({
   //   owner,
