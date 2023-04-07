@@ -1,5 +1,7 @@
 import * as core from '@actions/core'
-import {Octokit} from '@octokit/rest';
+import {Octokit} from '@octokit/rest'
+
+export const gitHubBaseURL: string = 'https://api.github.com';
 
 type ScanMatch = {
   StartLine: number;
@@ -41,8 +43,6 @@ type CheckOutput = {
 };
 
 export function createOutputJson(resultJson: ScanResult, checkTitle: string, startIndex: number, endIndex: number): CheckOutput {
-
-  console.log(resultJson);
   const mapped = resultJson.ScanMatches.slice(startIndex, endIndex).map((annotation: ScanMatch) => <ScanResultAnnotation>({path: annotation.Path,
     start_line: annotation.StartLine,
     end_line: annotation.EndLine,
@@ -67,7 +67,7 @@ export async function createCheck(outputFilePath: string, checkName: string, che
   const octokit = new Octokit({
     auth: authPAT,
     userAgent: 'KWS Annotate GH Action v1',
-    baseUrl: 'https://api.github.com',
+    baseUrl: gitHubBaseURL,
     log: console
   });
     
