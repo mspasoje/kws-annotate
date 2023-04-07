@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          echo '{"ValidMatches":{"Blocker":0,"Warning":2,"ShouldBeFixed":2,"Informational":3},"ScanStartTime":"2018-05-04T01:14:52Z","ScanEndTime":"2018-05-04T01:14:52Z","SourceId":"${{github.sha}}","ScanMatches":[{"Path":".github/workflows/test.yml","KeyWordSeverity":"ShouldBeFixed","StartLine":26,"EndLine":26,"Message":"We found a word 'bird' here."},{"Path":".github/workflows/test.yml","KeyWordSeverity":"Blocker","StartLine":21,"EndLine":21,"Message":"We found a word 'eagle' here."}]}' > $GITHUB_WORKSPACE/dist/output_file.json
+          echo '{"ValidMatches":{"Blocker":0,"Warning":2,"ShouldBeFixed":2,"Informational":3},"ScanStartTime":"2018-05-04T01:14:52Z","ScanEndTime":"2018-05-04T01:14:54Z","SourceId":"${{github.sha}}","ScanMatches":[{"Path":".github/workflows/test.yml","KeyWordSeverity":"ShouldBeFixed","StartLine":26,"EndLine":26,"Message":"We found a word 'bird' here."},{"Path":".github/workflows/test.yml","KeyWordSeverity":"Blocker","StartLine":21,"EndLine":21,"Message":"We found a word 'eagle' here."}]}' > $GITHUB_WORKSPACE/dist/output_file.json
       - run: |
           ls $GITHUB_WORKSPACE/dist/
       - uses: ./
