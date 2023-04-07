@@ -1,7 +1,7 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 5581:
+/***/ 38:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -35,34 +35,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.createCheck = exports.createOutputJson = void 0;
+exports.createCheck = exports.createOutputJson = exports.gitHubBaseURL = void 0;
+/* eslint import/no-dynamic-require: 0 */
+/* eslint @typescript-eslint/no-require-imports: 0 */
+/* eslint @typescript-eslint/no-var-requires: 0 */
 const core = __importStar(__nccwpck_require__(2186));
 const rest_1 = __nccwpck_require__(5375);
+exports.gitHubBaseURL = 'https://api.github.com';
 function createOutputJson(resultJson, checkTitle, startIndex, endIndex) {
-    console.log(resultJson);
-    const mapped = resultJson.ScanMatches.slice(startIndex, endIndex).map((annotation) => ({ path: annotation.Path,
+    const mapped = resultJson.ScanMatches.slice(startIndex, endIndex).map((annotation) => ({
+        path: annotation.Path,
         start_line: annotation.StartLine,
         end_line: annotation.EndLine,
-        annotation_level: annotation.KeyWordSeverity === "Blocker" ? "failure" : (annotation.KeyWordSeverity === "Informational" ? "notice" : "warning"),
+        annotation_level: annotation.KeyWordSeverity === 'Blocker'
+            ? 'failure'
+            : annotation.KeyWordSeverity === 'Informational'
+                ? 'notice'
+                : 'warning',
         message: annotation.Message
     }));
-    return ({
+    return {
         title: checkTitle,
         summary: `There are ${resultJson.ValidMatches.Blocker} blockers, ${resultJson.ValidMatches.Warning} warnings, ${resultJson.ValidMatches.ShouldBeFixed} should be fixed and ${resultJson.ValidMatches.Informational} informational issues.`,
         annotations: mapped
-    });
+    };
 }
 exports.createOutputJson = createOutputJson;
 function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT, headSHA) {
     return __awaiter(this, void 0, void 0, function* () {
-        core.debug("createCheck");
-        var result_json = require(outputFilePath);
+        core.debug('createCheck');
+        const result_json = require(outputFilePath);
         let startIndex = 0;
         const indexStep = 50;
         const octokit = new rest_1.Octokit({
             auth: authPAT,
             userAgent: 'KWS Annotate GH Action v1',
-            baseUrl: 'https://api.github.com',
+            baseUrl: exports.gitHubBaseURL,
             log: console
         });
         core.debug(`octokit client:${octokit.rest}`);
@@ -70,8 +78,8 @@ function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT
         let generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
         core.debug(`initial generatedOutput.annotations:${generatedOutput.annotations.length}`);
         const response = yield octokit.rest.checks.create({
-            owner: owner,
-            repo: repo,
+            owner,
+            repo,
             name: checkName,
             head_sha: headSHA,
             status: 'completed',
@@ -88,8 +96,8 @@ function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT
             core.debug(`first generatedOutput.annotations:${generatedOutput.annotations.length}`);
             while (generatedOutput.annotations.length > 0) {
                 yield octokit.request('PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}', {
-                    owner: owner,
-                    repo: repo,
+                    owner,
+                    repo,
                     check_run_id: response.data.id,
                     name: checkName,
                     output: generatedOutput,
@@ -103,7 +111,7 @@ function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT
             }
         }
         core.debug(`Create check completed`);
-        return response;
+        return response.status;
     });
 }
 exports.createCheck = createCheck;
@@ -146,7 +154,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
-const create_annotations_1 = __nccwpck_require__(5581);
+const create_annotations_1 = __nccwpck_require__(38);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
