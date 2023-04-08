@@ -8,7 +8,7 @@
     "ScanStartTime":"01-01-23",
     "ScanEndTime":"01-01-23",
     "SourceId":"${{github.sha}}",
-    "ScanMatches":[
+    "Annotations":[
         {
             "Path":".github/workflows/test.yml",
             "KeyWordSeverity":"ShouldBeFixed",
