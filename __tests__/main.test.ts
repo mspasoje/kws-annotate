@@ -3,8 +3,6 @@ import {ScanResult, createOutputJson} from '../src/create-annotations'
 
 test('throws invalid json file', async () => {
   expect(() => require('./test_output_invalid.json')).toThrowError()
-  //    'Unexpected token : in JSON at position 18'
-  //  )
 })
 
 test('generates proper annotation for input file and request', async () => {

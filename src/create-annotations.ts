@@ -6,7 +6,7 @@ import {Octokit} from '@octokit/rest'
 
 export const gitHubBaseURL = 'https://api.github.com'
 
-type ScanMatch = {
+type Annotation = {
   StartLine: number
   EndLine: number
   StartColumn: number
@@ -28,7 +28,7 @@ export type ScanResult = {
   SourceId: string
   ScanStartTime: string
   ScanEndTime: string
-  ScanMatches: ScanMatch[]
+  Annotations: Annotation[]
 }
 
 type ScanResultAnnotation = {
@@ -51,8 +51,8 @@ export function createOutputJson(
   startIndex: number,
   endIndex: number
 ): CheckOutput {
-  const mapped = resultJson.ScanMatches.slice(startIndex, endIndex).map(
-    (annotation: ScanMatch) =>
+  const mapped = resultJson.Annotations.slice(startIndex, endIndex).map(
+    (annotation: Annotation) =>
       ({
         path: annotation.Path,
         start_line: annotation.StartLine,
