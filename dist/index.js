@@ -73,12 +73,6 @@ function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT
         const result_json = require(outputFilePath);
         let startIndex = 0;
         const indexStep = 1;
-        //  const octokit = new Octokit({
-        //    auth: authPAT,
-        //    userAgent: `KWS Annotate GH Action v${LIB_VERSION}`,
-        //    baseUrl: gitHubBaseURL,
-        //    log: console
-        //  })
         const MyOctokit = rest_1.Octokit.plugin(plugin_rest_endpoint_methods_1.restEndpointMethods);
         const octokit = new MyOctokit({
             auth: authPAT,
@@ -117,19 +111,10 @@ function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT
                     output: generatedOutput
                 };
                 const responseUpdate = yield octokit.rest.checks.update(updateCheckParameters);
-                /*      await octokit.request(
-                        'PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}',
-                        {
-                          owner,
-                          repo,
-                          check_run_id: response.data.id,
-                          name: checkName,
-                          output: generatedOutput,
-                          headers: {
-                            'X-GitHub-Api-Version': '2022-11-28'
-                          }
-                        }
-                      )*/
+                if (responseUpdate.status !== 200) {
+                    core.debug(`Failed to update annotations: ${responseUpdate.status}`);
+                    process.exit(1);
+                }
                 core.debug(`update response status: ${responseUpdate.status}`);
                 startIndex += indexStep;
                 generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
