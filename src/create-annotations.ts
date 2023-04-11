@@ -93,7 +93,7 @@ export async function createCheck(
   const result_json: ScanResult = require(outputFilePath)
 
   let startIndex = 0
-  const indexStep = 50
+  const indexStep = 1
 
   //  const octokit = new Octokit({
   //    auth: authPAT,
@@ -114,10 +114,10 @@ export async function createCheck(
     RestEndpointMethodTypes['checks']['create']['parameters']
   type CreateCheckResponse =
     RestEndpointMethodTypes['checks']['create']['response']
-  //  type UpdateCheckParameters =
-  //    RestEndpointMethodTypes['checks']['update']['parameters']
-  //  type UpdateCheckResponse =
-  //    RestEndpointMethodTypes['checks']['update']['response']
+  type UpdateCheckParameters =
+    RestEndpointMethodTypes['checks']['update']['parameters']
+  type UpdateCheckResponse =
+    RestEndpointMethodTypes['checks']['update']['response']
 
   core.debug(`octokit client:${octokit.rest}`)
   core.debug(`octokit client:${octokit.rest.checks}`)
@@ -163,7 +163,17 @@ export async function createCheck(
       `first generatedOutput.annotations:${generatedOutput.annotations.length}`
     )
     while (generatedOutput.annotations.length > 0) {
-      await octokit.request(
+      const updateCheckParameters: UpdateCheckParameters = {
+        owner,
+        repo,
+        check_run_id: response.data.id,
+        name: checkName,
+        output: generatedOutput
+      }
+      const responseUpdate: UpdateCheckResponse =
+        await octokit.rest.checks.update(updateCheckParameters)
+
+      /*      await octokit.request(
         'PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}',
         {
           owner,
@@ -175,7 +185,8 @@ export async function createCheck(
             'X-GitHub-Api-Version': '2022-11-28'
           }
         }
-      )
+      )*/
+      core.debug(`update response status: ${responseUpdate.status}`)
       startIndex += indexStep
       generatedOutput = createOutputJson(
         result_json,

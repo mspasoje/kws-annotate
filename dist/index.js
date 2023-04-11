@@ -72,7 +72,7 @@ function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT
         core.debug('createCheck');
         const result_json = require(outputFilePath);
         let startIndex = 0;
-        const indexStep = 50;
+        const indexStep = 1;
         //  const octokit = new Octokit({
         //    auth: authPAT,
         //    userAgent: `KWS Annotate GH Action v${LIB_VERSION}`,
@@ -86,10 +86,6 @@ function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT
             baseUrl: exports.gitHubBaseURL,
             log: console
         });
-        //  type UpdateCheckParameters =
-        //    RestEndpointMethodTypes['checks']['update']['parameters']
-        //  type UpdateCheckResponse =
-        //    RestEndpointMethodTypes['checks']['update']['response']
         core.debug(`octokit client:${octokit.rest}`);
         core.debug(`octokit client:${octokit.rest.checks}`);
         let generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
@@ -113,16 +109,28 @@ function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT
             generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
             core.debug(`first generatedOutput.annotations:${generatedOutput.annotations.length}`);
             while (generatedOutput.annotations.length > 0) {
-                yield octokit.request('PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}', {
+                const updateCheckParameters = {
                     owner,
                     repo,
                     check_run_id: response.data.id,
                     name: checkName,
-                    output: generatedOutput,
-                    headers: {
-                        'X-GitHub-Api-Version': '2022-11-28'
-                    }
-                });
+                    output: generatedOutput
+                };
+                const responseUpdate = yield octokit.rest.checks.update(updateCheckParameters);
+                /*      await octokit.request(
+                        'PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}',
+                        {
+                          owner,
+                          repo,
+                          check_run_id: response.data.id,
+                          name: checkName,
+                          output: generatedOutput,
+                          headers: {
+                            'X-GitHub-Api-Version': '2022-11-28'
+                          }
+                        }
+                      )*/
+                core.debug(`update response status: ${responseUpdate.status}`);
                 startIndex += indexStep;
                 generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
                 core.debug(`loop generatedOutput.annotations:${generatedOutput.annotations.length}`);
