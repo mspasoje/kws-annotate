@@ -5,6 +5,7 @@
   "description": "TypeScript template action",
   "main": "lib/main.js",
   "scripts": {
+    "prebuild": "node -p \"'export const LIB_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
     "build": "tsc",
     "format": "prettier --write '**/*.ts'",
     "format-check": "prettier --check '**/*.ts'",
@@ -28,6 +29,7 @@
     "@actions/core": "^1.10.0"
   },
   "devDependencies": {
+    "@octokit/plugin-rest-endpoint-methods": "^7.0.1",
     "@octokit/rest": "^19.0.7",
     "@types/node": "^18.15.11",
     "@typescript-eslint/parser": "^5.57.1",

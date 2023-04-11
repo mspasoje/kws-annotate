@@ -45,6 +45,8 @@ exports.createCheck = exports.createOutputJson = exports.gitHubBaseURL = void 0;
 /* eslint @typescript-eslint/no-var-requires: 0 */
 const core = __importStar(__nccwpck_require__(2186));
 const rest_1 = __nccwpck_require__(5375);
+const version_1 = __nccwpck_require__(8217);
+const plugin_rest_endpoint_methods_1 = __nccwpck_require__(3044);
 exports.gitHubBaseURL = 'https://api.github.com';
 function createOutputJson(resultJson, checkTitle, startIndex, endIndex) {
     const mapped = resultJson.Annotations.slice(startIndex, endIndex).map((annotation) => ({
@@ -71,17 +73,28 @@ function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT
         const result_json = require(outputFilePath);
         let startIndex = 0;
         const indexStep = 50;
-        const octokit = new rest_1.Octokit({
+        //  const octokit = new Octokit({
+        //    auth: authPAT,
+        //    userAgent: `KWS Annotate GH Action v${LIB_VERSION}`,
+        //    baseUrl: gitHubBaseURL,
+        //    log: console
+        //  })
+        const MyOctokit = rest_1.Octokit.plugin(plugin_rest_endpoint_methods_1.restEndpointMethods);
+        const octokit = new MyOctokit({
             auth: authPAT,
-            userAgent: 'KWS Annotate GH Action v1',
+            userAgent: `KWS Annotate GH Action v${version_1.LIB_VERSION}`,
             baseUrl: exports.gitHubBaseURL,
             log: console
         });
+        //  type UpdateCheckParameters =
+        //    RestEndpointMethodTypes['checks']['update']['parameters']
+        //  type UpdateCheckResponse =
+        //    RestEndpointMethodTypes['checks']['update']['response']
         core.debug(`octokit client:${octokit.rest}`);
         core.debug(`octokit client:${octokit.rest.checks}`);
         let generatedOutput = createOutputJson(result_json, checkTitle, startIndex, startIndex + indexStep);
         core.debug(`initial generatedOutput.annotations:${generatedOutput.annotations.length}`);
-        const response = yield octokit.rest.checks.create({
+        const createCheckParams = {
             owner,
             repo,
             name: checkName,
@@ -91,7 +104,8 @@ function createCheck(outputFilePath, checkName, checkTitle, owner, repo, authPAT
             completed_at: result_json.ScanEndTime,
             conclusion: 'success',
             output: generatedOutput
-        });
+        };
+        const response = yield octokit.rest.checks.create(createCheckParams);
         core.debug(`octokit client:${response.status}`);
         //  core.debug(`octokit client:${response.data}`);
         if (response.status === 201) {
@@ -190,6 +204,18 @@ function run() {
     });
 }
 run();
+
+
+/***/ }),
+
+/***/ 8217:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LIB_VERSION = void 0;
+exports.LIB_VERSION = "0.0.0";
 
 
 /***/ }),

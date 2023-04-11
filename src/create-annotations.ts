@@ -3,6 +3,12 @@
 /* eslint @typescript-eslint/no-var-requires: 0 */
 import * as core from '@actions/core'
 import {Octokit} from '@octokit/rest'
+import {LIB_VERSION} from './version'
+
+import {
+  restEndpointMethods,
+  RestEndpointMethodTypes // eslint-disable-line import/named
+} from '@octokit/plugin-rest-endpoint-methods'
 
 export const gitHubBaseURL = 'https://api.github.com'
 
@@ -89,12 +95,29 @@ export async function createCheck(
   let startIndex = 0
   const indexStep = 50
 
-  const octokit = new Octokit({
+  //  const octokit = new Octokit({
+  //    auth: authPAT,
+  //    userAgent: `KWS Annotate GH Action v${LIB_VERSION}`,
+  //    baseUrl: gitHubBaseURL,
+  //    log: console
+  //  })
+
+  const MyOctokit = Octokit.plugin(restEndpointMethods)
+  const octokit = new MyOctokit({
     auth: authPAT,
-    userAgent: 'KWS Annotate GH Action v1',
+    userAgent: `KWS Annotate GH Action v${LIB_VERSION}`,
     baseUrl: gitHubBaseURL,
     log: console
   })
+
+  type CreateCheckParameters =
+    RestEndpointMethodTypes['checks']['create']['parameters']
+  type CreateCheckResponse =
+    RestEndpointMethodTypes['checks']['create']['response']
+  //  type UpdateCheckParameters =
+  //    RestEndpointMethodTypes['checks']['update']['parameters']
+  //  type UpdateCheckResponse =
+  //    RestEndpointMethodTypes['checks']['update']['response']
 
   core.debug(`octokit client:${octokit.rest}`)
   core.debug(`octokit client:${octokit.rest.checks}`)
@@ -108,7 +131,7 @@ export async function createCheck(
     `initial generatedOutput.annotations:${generatedOutput.annotations.length}`
   )
 
-  const response = await octokit.rest.checks.create({
+  const createCheckParams: CreateCheckParameters = {
     owner,
     repo,
     name: checkName,
@@ -118,7 +141,11 @@ export async function createCheck(
     completed_at: result_json.ScanEndTime,
     conclusion: 'success',
     output: generatedOutput
-  })
+  }
+
+  const response: CreateCheckResponse = await octokit.rest.checks.create(
+    createCheckParams
+  )
 
   core.debug(`octokit client:${response.status}`)
 
