@@ -4,6 +4,7 @@
 import * as core from '@actions/core'
 import {Octokit} from '@octokit/rest'
 import {LIB_VERSION} from './version'
+import {schema} from './validations'
 
 import {
   restEndpointMethods,
@@ -11,6 +12,14 @@ import {
 } from '@octokit/plugin-rest-endpoint-methods'
 
 export const gitHubBaseURL = 'https://api.github.com'
+type CreateCheckParameters =
+  RestEndpointMethodTypes['checks']['create']['parameters']
+type CreateCheckResponse =
+  RestEndpointMethodTypes['checks']['create']['response']
+type UpdateCheckParameters =
+  RestEndpointMethodTypes['checks']['update']['parameters']
+type UpdateCheckResponse =
+  RestEndpointMethodTypes['checks']['update']['response']
 
 type Annotation = {
   StartLine: number
@@ -91,6 +100,7 @@ export async function createCheck(
 ): Promise<number> {
   core.debug('createCheck')
   const result_json: ScanResult = require(outputFilePath)
+  schema.validate(result_json)
 
   let startIndex = 0
   const indexStep = 1
@@ -102,15 +112,6 @@ export async function createCheck(
     baseUrl: gitHubBaseURL,
     log: console
   })
-
-  type CreateCheckParameters =
-    RestEndpointMethodTypes['checks']['create']['parameters']
-  type CreateCheckResponse =
-    RestEndpointMethodTypes['checks']['create']['response']
-  type UpdateCheckParameters =
-    RestEndpointMethodTypes['checks']['update']['parameters']
-  type UpdateCheckResponse =
-    RestEndpointMethodTypes['checks']['update']['response']
 
   core.debug(`octokit client:${octokit.rest}`)
   core.debug(`octokit client:${octokit.rest.checks}`)
@@ -124,7 +125,7 @@ export async function createCheck(
     `initial generatedOutput.annotations:${generatedOutput.annotations.length}`
   )
 
-  const createCheckParams: CreateCheckParameters = {
+  const response: CreateCheckResponse = await octokit.rest.checks.create({
     owner,
     repo,
     name: checkName,
@@ -134,11 +135,7 @@ export async function createCheck(
     completed_at: result_json.ScanEndTime,
     conclusion: 'success',
     output: generatedOutput
-  }
-
-  const response: CreateCheckResponse = await octokit.rest.checks.create(
-    createCheckParams
-  )
+  } as CreateCheckParameters)
 
   core.debug(`octokit client:${response.status}`)
 
@@ -157,15 +154,14 @@ export async function createCheck(
     )
 
     while (generatedOutput.annotations.length > 0) {
-      const updateCheckParameters: UpdateCheckParameters = {
-        owner,
-        repo,
-        check_run_id: response.data.id,
-        name: checkName,
-        output: generatedOutput
-      }
       const responseUpdate: UpdateCheckResponse =
-        await octokit.rest.checks.update(updateCheckParameters)
+        await octokit.rest.checks.update({
+          owner,
+          repo,
+          check_run_id: response.data.id,
+          name: checkName,
+          output: generatedOutput
+        } as UpdateCheckParameters)
       if (responseUpdate.status !== 200) {
         core.debug(`Failed to update annotations: ${responseUpdate.status}`)
         process.exit(1)
